@@ -22,7 +22,7 @@ def run_pre_processor(context_id):
                 (cd {destination_folder} && rename \'s/Coura_*//\' *) && \
                 (cd simulation && ./mesh &)''')
 
-    return 'Files downloaded\n'
+    return 'Simulation being processed\n'
 
 if __name__ == "__main__":
     ENVIRONMENT_DEBUG = os.environ.get("DEBUG", False)
