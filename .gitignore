@@ -129,5 +129,4 @@ dmypy.json
 .pyre/
 
 env.sh
-context_files/
-gmsh/
+simulation/

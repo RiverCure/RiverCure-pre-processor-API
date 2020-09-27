@@ -1,5 +1,5 @@
 import os, requests
-from flask import Flask, Response
+from flask import Flask, Response, request
 
 app = Flask(__name__)
 
@@ -9,18 +9,19 @@ def ping():
     status_code = Response(status=200)
     return status_code
 
-@app.route('/process/<string:context_id>')
-def run_pre_processor(context_id):
-    # Request and download files
-    url = f'http://localhost:8000/contexts/download/{context_id}'
-    downloaded_folder = 'download_context.zip'
-    destination_folder = 'simulation/context_files'
-    req = requests.get(url)
-    open(downloaded_folder, 'wb').write(req.content)
-    os.system(f'''rm {destination_folder}/* ; \
-                unzip {downloaded_folder} -d {destination_folder} && rm -R {downloaded_folder} && \
-                (cd {destination_folder} && rename \'s/Coura_*//\' *) && \
-                (cd simulation && ./mesh &)''')
+@app.route('/process/', methods=['POST'])
+def run_pre_processor():
+    destination_folder = 'simulation/gis/context_files'
+
+    try:
+        if request.method == 'POST':
+            for key in request.files:
+                request.files[key].save(f'{destination_folder}/{key}')
+
+        os.system(f'(cd simulation/gis && ./mesh && cd ../mesh/vtk && mv meshQuality.vtk coura_mesh.vtk &)')
+    except Exception as e:
+        print(f'Failed simulation!\nException{e}')
+        return 'Simulation failed'
 
     return 'Simulation being processed\n'
 
