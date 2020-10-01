@@ -1,0 +1,2 @@
+cd "C:\Program Files\ParaView 5.8.1-Windows-Python3.7-msvc2015-64bit"
+.\bin\pvpython.exe share\paraview-5.8\web\visualizer\server\pvw-visualizer.py --content share\paraview-5.8\web\visualizer\www\ --data "C:\Users\jorge\Desktop\RiverCure-pre-processor-API\paraview_visualizer\data" --port 8090 -s
