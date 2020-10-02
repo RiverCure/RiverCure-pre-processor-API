@@ -1,4 +1,4 @@
-import os, requests
+import os, requests, subprocess
 from flask import Flask, Response, request
 
 app = Flask(__name__)
@@ -18,8 +18,11 @@ def run_pre_processor():
             for key in request.files:
                 request.files[key].save(f'{destination_folder}/{key}')
 
-        os.system(f'''(cd simulation/gis && ./mesh && cd ../.. \
-                    && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk &)''')
+        # os.system(f'''(cd simulation/gis && ./mesh && cd ../.. \
+        #             && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk &)''')
+
+        subprocess.call(f'''(cd simulation/gis && ./mesh && cd ../.. \
+                    && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk &)''', shell=True)
     except Exception as e:
         print(f'Failed pre processing!\nException{e}')
         return 'Pre processing failed'
@@ -41,6 +44,8 @@ def simulate():
                     pass
                 else:
                     request.files[key].save(f'{sensor_data_destination_folder}/{key}')
+
+        subprocess.call(f'''(cd simulation && ./solver2D && cd .. &)''', shell=True)
 
     except Exception as e:
         print(f'Failed simulation!\nException{e}')
