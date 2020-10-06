@@ -1,0 +1,12 @@
+# docker ignore file
+
+PreprocessingStav.log
+.git
+__pycache__
+paraview_visualizer/
+venv/
+wsl2-venv/
+.gitattributes
+.gitignore
+README.md
+start-docker.cmd

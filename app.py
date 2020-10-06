@@ -11,6 +11,7 @@ def ping():
 
 @app.route('/process/', methods=['POST'])
 def run_pre_processor():
+    rivercure_url = os.environ['RIVERCURE_URL']
     destination_folder = 'simulation/gis/context_files'
     context_name = request.args.get('context_name')
     try:
@@ -23,8 +24,13 @@ def run_pre_processor():
 
         subprocess.call(f'''(cd simulation/gis && ./mesh && cd ../.. \
                     && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk &)''', shell=True)
+        
+        payload = {'status': True}
+        requests.get(f'{rivercure_url}/contexts/mesh-status/{context_name}', params=payload)
     except Exception as e:
         print(f'Failed pre processing!\nException{e}')
+        payload = {'status': False}
+        requests.get(f'{rivercure_url}/contexts/mesh-status/{context_name}', params=payload)
         return 'Pre processing failed'
 
     return 'Pre processing started\n'
