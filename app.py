@@ -23,10 +23,11 @@ def run_pre_processor():
         #             && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk &)''')
 
         subprocess.call(f'''(cd simulation/gis && ./mesh && cd ../.. \
-                    && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk &)''', shell=True)
+                    && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk \
+                    && curl {rivercure_url}/contexts/mesh-status/{context_name}?status=True &)''', shell=True)
         
-        payload = {'status': True}
-        requests.get(f'{rivercure_url}/contexts/mesh-status/{context_name}', params=payload)
+        # payload = {'status': True}
+        # requests.get(f'{rivercure_url}/contexts/mesh-status/{context_name}', params=payload)
     except Exception as e:
         print(f'Failed pre processing!\nException{e}')
         payload = {'status': False}
