@@ -6,11 +6,11 @@ Might be necessary to install GDAL like:
     pip install GDAL==$(gdal-config --version) --global-option=build_ext --global-option="-I/usr/include/gdal"
 
 ## stavResults
-Python script to transform vtk into geotiff
+Python script to transform maxima vtk into geotiff
 Depends on the installation of the requirements.txt mentioned in the above section
 e.g. 
 ```
-python stavResults.py -i {input_filename}.vtk -o {output_filename}.tif
+python stavResults.py -i {maxima_input_filename}.vtk -o {output_filename}.tif
 ```
 
 ## hiStav and pre-processor
