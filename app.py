@@ -29,12 +29,10 @@ def run_pre_processor():
         # payload = {'status': True}
         # requests.get(f'{rivercure_url}/contexts/mesh-status/{context_name}', params=payload)
     except Exception as e:
-        print(f'Failed pre processing!\nException{e}')
-        payload = {'status': False}
-        requests.get(f'{rivercure_url}/contexts/mesh-status/{context_name}', params=payload)
-        return 'Pre processing failed'
+        print(f'Failed pre-processing!\nException{e}')
+        return 'fail'
 
-    return 'Pre processing started\n'
+    return 'success'
 
 @app.route('/simulate/', methods=['POST'])
 def simulate():
