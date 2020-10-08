@@ -1,7 +1,19 @@
 # RiverCure-pre-processor-API
 Flask python script to run the rivercure pre processor
 
+## Install requirements.txt
+Might be necessary to install GDAL like:
+    pip install GDAL==$(gdal-config --version) --global-option=build_ext --global-option="-I/usr/include/gdal"
 
+## stavResults
+Python script to transform vtk into geotiff
+Depends on the installation of the requirements.txt mentioned in the above section
+e.g. 
+```
+python stavResults.py -i {input_filename}.vtk -o {output_filename}.tif
+```
+
+## hiStav and pre-processor
 It is necessary to create a folder with the name simulation and the tree of histav
 mesh and gmsh 4.0.7 executables should be added in the respective places
 
