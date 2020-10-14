@@ -14,6 +14,7 @@ def run_pre_processor():
     rivercure_url = os.environ['RIVERCURE_URL']
     destination_folder = 'simulation/gis/context_files'
     context_name = request.args.get('context_name')
+    print(context_name)
     try:
         if request.method == 'POST':
             for key in request.files:
@@ -46,11 +47,10 @@ def simulate():
             for key in request.files:
                 if key == 'frequency':
                     request.files[key].save(f'{frequency_destination_folder}')
-                    pass
                 else:
                     request.files[key].save(f'{sensor_data_destination_folder}/{key}')
 
-        subprocess.call(f'''(cd simulation && ./solver2D && cd .. &)''', shell=True)
+        subprocess.call(f'''(cd simulation && ./solver2D-OMP.dat && cd .. &)''', shell=True)
 
     except Exception as e:
         print(f'Failed simulation!\nException{e}')
