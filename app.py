@@ -64,7 +64,7 @@ def simulation_results():
     event_id = request.args.get('event_id')
     folder_name = f'{context_name}_event_{event_id}_results.zip'
 
-    os.system(f'''rm -r *.zip || rm -r results/* \
+    os.system(f'''rm -r *.zip ; rm -r results/* \
                 ; vtk=$(cd simulation/output/maxima && ls | grep *.vtk) \
                 && (cd simulation/output/rasters && python stavResults.py -i ../maxima/$vtk -o ../../../results/{context_name}_event_{event_id})''')
     # files = {
@@ -74,17 +74,17 @@ def simulation_results():
     #     'max_vel': open('out-Max_Vel.tif', 'rb')
     # }
 
-    zipfolder = zipfile.ZipFile(folder_name, 'w', compression = zipfile.ZIP_STORED)
+    with zipfile.ZipFile(folder_name, 'w', compression = zipfile.ZIP_STORED) as zipfolder:
 
-    for root,dirs, files in os.walk('results/'):
-        for file in files:
-            zipfolder.write('results/'+file)
-    zipfolder.close()
+        for root,dirs, files in os.walk('results/'):
+            for file in files:
+                zipfolder.write('results/' + file)
 
     return send_file(folder_name,
             mimetype = 'zip',
             attachment_filename= folder_name,
             as_attachment = True)
+
     # return send_file('./out-Max_Depth.tif', attachment_filename='out-Max_Depth.tif')
 
 if __name__ == "__main__":
