@@ -37,10 +37,12 @@ def run_pre_processor():
 
 @app.route('/simulate/', methods=['POST'])
 def simulate():
+    rivercure_url = os.environ['RIVERCURE_URL']
     frequency_destination_folder = 'simulation/output/output.cnt'
     sensor_data_destination_folder = 'simulation/boundary/gauges'
     context_name = request.args.get('context_name')
-
+    event_id = request.args.get('event_id')
+    print(event_id)
     # bnd are duplicated might be necessary to remove them
     try:
         if request.method == 'POST':
@@ -50,12 +52,13 @@ def simulate():
                 else:
                     request.files[key].save(f'{sensor_data_destination_folder}/{key}')
 
-        subprocess.call(f'''(cd simulation && ./solver2D-OMP.dat && cd .. &)''', shell=True)
+        subprocess.call(f'''(cd simulation && ./solver2D-OMP.dat \
+                            && curl {rivercure_url}/contexts/simulation/results/handle/{event_id} &)''', shell=True)
     except Exception as e:
         print(f'Failed simulation!\nException{e}')
-        return 'Simulation failed'
+        return 'fail'
 
-    return 'Simulation started\n'
+    return 'success'
 
 @app.route('/simulation/results/')
 def simulation_results():
