@@ -5,11 +5,11 @@ Flask python REST API application for integration with RiverCure Portal
 The REST API definiton is on app.py file
 
 ### GET
-```host```/
+```host```/<br/>
 ### POST
-```host```/process/?event_id={event_id_value}&context_name={context_name_value}
-```host```/simulate/?event_id={event_id_value}&context_name={context_name_value}
-```host```/simulation/results/?event_id={event_id_value}&context_name={context_name_value}
+```host```/process/?event_id={event_id_value}&context_name={context_name_value}<br/>
+```host```/simulate/?event_id={event_id_value}&context_name={context_name_value}<br/>
+```host```/simulation/results/?event_id={event_id_value}&context_name={context_name_value}<br/>
 
 ## Install requirements.txt
 Might be necessary to install GDAL like:
