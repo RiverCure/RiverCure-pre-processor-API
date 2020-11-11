@@ -21,11 +21,11 @@ Parameters
  | Name | Type | Description |
  | ---- | ---- | ----------- |
  | context name | String | Name of the context in RiverCure Portal to which the geometries sent belong to<br/>It is sent on the url |
- | domain.geojson | geojson file | geojson file with definiton of the context domain<br/>It is sent in the body of the request |
- | refinements.geojson | geojson file | geojson file with definiton of the context refinements<br/>It is sent in the body of the request |
- | alignments.geojson | geojson file | geojson file with definiton of the context alignments<br/>It is sent in the body of the request |
- | boundaries.geojson | geojson file | geojson file with definiton of the context boundaries<br/>It is sent in the body of the request |
- | boundaries_points.geojson | geojson file | geojson file with definiton of the context boundaries points<br/>It is sent in the body of the request |
+ | domain | Geojson file | Geojson file with definiton of the context domain<br/>It is sent in the body of the request |
+ | refinements | Geojson file | Geojson file with definiton of the context refinements<br/>It is sent in the body of the request |
+ | alignments | Geojson file | Geojson file with definiton of the context alignments<br/>It is sent in the body of the request |
+ | boundaries | Geojson file | Geojson file with definiton of the context boundaries<br/>It is sent in the body of the request |
+ | boundaries_points | Geojson file | Geojson file with definiton of the context boundaries points<br/>It is sent in the body of the request |
 
 
 #### POST /simulate/
@@ -36,6 +36,8 @@ Parameters
  | ---- | ---- | ----------- |
  | context name | String | Name of the context in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
  | event id | Int | Context event identifier in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
+ | output | Text file | Text file with 2 lines containing values for the simulation<br/>It is sent in the body of the request with .cnt extension|
+ | series | Text file | Collection of text files containing the time series for each sensor<br/>1 file per context sensor<br/>It is sent in the body of the request with .bnd extension|
 
 #### POST /simulation/results/
 Return the results for a given context event simulation
