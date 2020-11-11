@@ -7,9 +7,44 @@ The REST API definiton is on app.py file
 ### GET
 ```host```/<br/>
 ### POST
-```host```/process/?event_id={event_id_value}&context_name={context_name_value}<br/>
+```host```/process/?context_name={context_name_value}<br/>
 ```host```/simulate/?event_id={event_id_value}&context_name={context_name_value}<br/>
 ```host```/simulation/results/?event_id={event_id_value}&context_name={context_name_value}<br/>
+
+#### GET /
+Check if server is alive
+
+#### POST /process/
+Generate mesh for a given context
+
+Parameters
+ | Name | Type | Description |
+ | ---- | ---- | ----------- |
+ | context name | String | Name of the context in RiverCure Portal to which the geometries sent belong to<br/>It is sent on the url |
+ | domain.geojson | geojson file | geojson file with definiton of the context domain<br/>It is sent in the body of the request |
+ | refinements.geojson | geojson file | geojson file with definiton of the context refinements<br/>It is sent in the body of the request |
+ | alignments.geojson | geojson file | geojson file with definiton of the context alignments<br/>It is sent in the body of the request |
+ | boundaries.geojson | geojson file | geojson file with definiton of the context boundaries<br/>It is sent in the body of the request |
+ | boundaries_points.geojson | geojson file | geojson file with definiton of the context boundaries points<br/>It is sent in the body of the request |
+
+
+#### POST /simulate/
+Execute a HiSTAV simulation for a given context event
+
+Parameters
+ | Name | Type | Description |
+ | ---- | ---- | ----------- |
+ | context name | String | Name of the context in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
+ | event id | Int | Context event identifier in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
+
+#### POST /simulation/results/
+Return the results for a given context event simulation
+
+Parameters
+ | Name | Type | Description |
+ | ---- | ---- | ----------- |
+ | context name | String | Name of the context in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
+ | event id | Int | Context event identifier in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
 
 ## Install requirements.txt
 Might be necessary to install GDAL like:
