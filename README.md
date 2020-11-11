@@ -45,8 +45,8 @@ Return the results for a given context event simulation
 **Parameters**
  | Name | Type | Description |
  | ---- | ---- | ----------- |
- | context name | String | Name of the context in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
- | event id | Int | Context event identifier in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
+ | context name | String | Name of the context in RiverCure Portal to which the simulation belongs to<br/><br/>It is sent on the url |
+ | event id | Int | Context event identifier in RiverCure Portal to which the simulation belongs to<br/><br/>It is sent on the url |
 
 ## Install requirements.txt
 Might be necessary to install GDAL like:
