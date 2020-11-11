@@ -7,9 +7,9 @@ The REST API definiton is on app.py file
 ### GET
 ```host```/<br/>
 ### POST
-```host```/process/?context_name={context_name_value}<br/>
-```host```/simulate/?event_id={event_id_value}&context_name={context_name_value}<br/>
-```host```/simulation/results/?event_id={event_id_value}&context_name={context_name_value}<br/>
+```host```/process/?context_name={context_name_value}<br/><br/>
+```host```/simulate/?event_id={event_id_value}&context_name={context_name_value}<br/><br/>
+```host```/simulation/results/?event_id={event_id_value}&context_name={context_name_value}<br/><br/>
 
 #### GET /
 Check if server is alive
@@ -20,12 +20,12 @@ Generate mesh for a given context
 **Parameters**
  | Name | Type | Description |
  | ---- | ---- | ----------- |
- | context name | String | Name of the context in RiverCure Portal to which the geometries sent belong to<br/>It is sent on the url |
- | domain | Geojson file | Geojson file with definiton of the context domain<br/>It is sent in the body of the request |
- | refinements | Geojson file | Geojson file with definiton of the context refinements<br/>It is sent in the body of the request |
- | alignments | Geojson file | Geojson file with definiton of the context alignments<br/>It is sent in the body of the request |
- | boundaries | Geojson file | Geojson file with definiton of the context boundaries<br/>It is sent in the body of the request |
- | boundaries_points | Geojson file | Geojson file with definiton of the context boundaries points<br/>It is sent in the body of the request |
+ | context name | String | Name of the context in RiverCure Portal to which the geometries sent belong to<br/><br/>It is sent on the url |
+ | domain | Geojson file | Geojson file with definiton of the context domain<br/><br/>It is sent in the body of the request |
+ | refinements | Geojson file | Geojson file with definiton of the context refinements<br/><br/>It is sent in the body of the request |
+ | alignments | Geojson file | Geojson file with definiton of the context alignments<br/><br/>It is sent in the body of the request |
+ | boundaries | Geojson file | Geojson file with definiton of the context boundaries<br/><br/>It is sent in the body of the request |
+ | boundaries_points | Geojson file | Geojson file with definiton of the context boundaries points<br/><br/>It is sent in the body of the request |
 
 
 #### POST /simulate/
@@ -34,10 +34,10 @@ Execute a HiSTAV simulation for a given context event
 **Parameters**
  | Name | Type | Description |
  | ---- | ---- | ----------- |
- | context name | String | Name of the context in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
- | event id | Int | Context event identifier in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
- | output | Text file | Text file with 2 lines containing values for the simulation<br/>It is sent in the body of the request with .cnt extension|
- | series | Text file | Collection of text files containing the time series for each sensor<br/>1 file per context sensor<br/>It is sent in the body of the request with .bnd extension|
+ | context name | String | Name of the context in RiverCure Portal to which the simulation belongs to<br/><br/>It is sent on the url |
+ | event id | Int | Context event identifier in RiverCure Portal to which the simulation belongs to<br/><br/>It is sent on the url |
+ | output | Text file | Text file with 2 lines containing values for the simulation<br/><br/>It is sent in the body of the request with .cnt extension|
+ | series | Text file | Collection of text files containing the time series for each sensor<br/><br/>1 file per context sensor<br/><br/>It is sent in the body of the request with .bnd extension|
 
 #### POST /simulation/results/
 Return the results for a given context event simulation
