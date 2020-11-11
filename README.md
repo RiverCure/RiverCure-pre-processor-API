@@ -17,7 +17,7 @@ Check if server is alive
 #### POST /process/
 Generate mesh for a given context
 
-Parameters
+**Parameters**
  | Name | Type | Description |
  | ---- | ---- | ----------- |
  | context name | String | Name of the context in RiverCure Portal to which the geometries sent belong to<br/>It is sent on the url |
@@ -31,7 +31,7 @@ Parameters
 #### POST /simulate/
 Execute a HiSTAV simulation for a given context event
 
-Parameters
+**Parameters**
  | Name | Type | Description |
  | ---- | ---- | ----------- |
  | context name | String | Name of the context in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
@@ -42,7 +42,7 @@ Parameters
 #### POST /simulation/results/
 Return the results for a given context event simulation
 
-Parameters
+**Parameters**
  | Name | Type | Description |
  | ---- | ---- | ----------- |
  | context name | String | Name of the context in RiverCure Portal to which the simulation belongs to<br/>It is sent on the url |
