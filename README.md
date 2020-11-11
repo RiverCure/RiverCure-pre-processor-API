@@ -1,5 +1,15 @@
 # RiverCure-pre-processor-API
-Flask python script to run the rivercure pre processor
+Flask python REST API application for integration with RiverCure Portal
+
+## API endpoints
+The REST API definiton is on app.py file
+
+### GET
+```host```/
+### POST
+```host```/process/?event_id={event_id_value}&context_name={context_name_value}
+```host```/simulate/?event_id={event_id_value}&context_name={context_name_value}
+```host```/simulation/results/?event_id={event_id_value}&context_name={context_name_value}
 
 ## Install requirements.txt
 Might be necessary to install GDAL like:
