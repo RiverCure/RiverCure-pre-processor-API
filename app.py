@@ -1,6 +1,8 @@
 import os, requests, subprocess, zipfile
 from flask import Flask, Response, request, send_file
+from dotenv import load_dotenv
 
+load_dotenv()
 app = Flask(__name__)
 
 
