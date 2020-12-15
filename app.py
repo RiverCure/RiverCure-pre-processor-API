@@ -11,7 +11,7 @@ def ping():
 
 @app.route('/process/', methods=['POST'])
 def run_pre_processor():
-    rivercure_url = os.environ['RIVERCURE_URL']
+    requester_ip = request.remote_addr
     destination_folder = 'simulation/gis/context_files'
     context_name = request.args.get('context_name')
     print(context_name)
@@ -25,7 +25,7 @@ def run_pre_processor():
 
         subprocess.call(f'''(cd simulation/gis && ./mesh && cd ../.. \
                     && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk \
-                    && curl {rivercure_url}/contexts/mesh-status/{context_name}?status=True &)''', shell=True)
+                    && curl {requester_ip}/contexts/mesh-status/{context_name}?status=True &)''', shell=True)
         
         # payload = {'status': True}
         # requests.get(f'{rivercure_url}/contexts/mesh-status/{context_name}', params=payload)
@@ -37,7 +37,7 @@ def run_pre_processor():
 
 @app.route('/simulate/', methods=['POST'])
 def simulate():
-    rivercure_url = os.environ['RIVERCURE_URL']
+    requester_ip = request.remote_addr
     frequency_destination_folder = 'simulation/output/output.cnt'
     sensor_data_destination_folder = 'simulation/boundary/gauges'
     context_name = request.args.get('context_name')
@@ -53,7 +53,7 @@ def simulate():
                     request.files[key].save(f'{sensor_data_destination_folder}/{key}')
 
         subprocess.call(f'''(cd simulation && ./solver2D-OMP.dat \
-                            && curl {rivercure_url}/contexts/simulation/results/handle/{event_id} &)''', shell=True)
+                            && curl {requester_ip}/contexts/simulation/results/handle/{event_id} &)''', shell=True)
     except Exception as e:
         print(f'Failed simulation!\nException{e}')
         return 'fail'
