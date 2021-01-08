@@ -1,5 +1,5 @@
 import os, requests, subprocess, zipfile
-from flask import Flask, Response, request, send_file
+from flask import Flask, Response, request, send_file, send_from_directory
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -65,6 +65,12 @@ def simulate():
 
     return 'success'
 
+@app.route('/pre-processing/results/')
+def preprocessing_results():
+    context_name = request.args.get('context_name')
+    path = os.path.join(app.root_path, 'simulation/mesh/vtk/')
+    return send_from_directory(path, filename='meshQuality.vtk')
+
 @app.route('/simulation/results/')
 def simulation_results():
     #event id necessary in the future
@@ -83,7 +89,6 @@ def simulation_results():
     # }
 
     with zipfile.ZipFile(folder_name, 'w', compression = zipfile.ZIP_STORED) as zipfolder:
-
         for root,dirs, files in os.walk('results/'):
             for file in files:
                 zipfolder.write('results/' + file)
