@@ -14,13 +14,16 @@ def ping():
 @app.route('/process/', methods=['POST'])
 def run_pre_processor():
     requester_ip = request.remote_addr
-    destination_folder = 'simulation/gis/context_files'
+    destination_folder = 'simulation/gis/'
     context_name = request.args.get('context_name')
     print(context_name)
     try:
         if request.method == 'POST':
             for key in request.files:
-                request.files[key].save(f'{destination_folder}/{key}')
+                if key == 'dtm.tif' or key == 'frictionCoef.tif':
+                    request.files[key].save(f'{destination_folder}rasters/{key}')
+                else:
+                    request.files[key].save(f'{destination_folder}context_files/{key}')
 
         # os.system(f'''(cd simulation/gis && ./mesh && cd ../.. \
         #             && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk &)''')
