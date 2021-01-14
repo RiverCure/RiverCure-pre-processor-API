@@ -14,10 +14,12 @@ def ping():
 @app.route('/process/', methods=['POST'])
 def run_pre_processor():
     requester_ip = request.remote_addr
-    destination_folder = 'simulation/gis/'
     context_name = request.args.get('context_name')
+    destination_folder = f'{context_name}_simulation/gis/'
     print(context_name)
     try:
+        os.system(f'cp -r simulation {context_name}_simulation')
+
         if request.method == 'POST':
             for key in request.files:
                 if key == 'dtm.tif' or key == 'frictionCoef.tif':
@@ -28,8 +30,8 @@ def run_pre_processor():
         # os.system(f'''(cd simulation/gis && ./mesh && cd ../.. \
         #             && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk &)''')
 
-        subprocess.call(f'''(cd simulation/gis && ./mesh && cd ../.. \
-                    && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk \
+        subprocess.call(f'''(cd {context_name}_simulation/gis && ./mesh && cd ../.. \
+                    && cp {context_name}_simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk \
                     && curl {requester_ip}/contexts/mesh-status/{context_name}?status=True &)''', shell=True)
         
         # payload = {'status': True}
@@ -43,10 +45,10 @@ def run_pre_processor():
 @app.route('/simulate/', methods=['POST'])
 def simulate():
     requester_ip = request.remote_addr
-    frequency_destination_folder = 'simulation/output/output.cnt'
-    sensor_data_destination_folder = 'simulation/boundary/gauges'
     context_name = request.args.get('context_name')
     event_id = request.args.get('event_id')
+    frequency_destination_folder = f'{context_name}_simulation/output/output.cnt'
+    sensor_data_destination_folder = f'{context_name}_simulation/boundary/gauges'
     print(event_id)
     # bnd are duplicated might be necessary to remove them
     try:
@@ -57,7 +59,7 @@ def simulate():
                 else:
                     request.files[key].save(f'{sensor_data_destination_folder}/{key}')
 
-        subprocess.call(f'''(cd simulation && ./solver2D-OMP.dat \
+        subprocess.call(f'''(cd {context_name}_simulation && ./solver2D-OMP.dat \
                             && curl {requester_ip}/contexts/simulation/results/handle/{event_id} &)''', shell=True)
     except Exception as e:
         print(f'Failed simulation!\nException{e}')
@@ -68,7 +70,7 @@ def simulate():
 @app.route('/pre-processing/results/')
 def preprocessing_results():
     context_name = request.args.get('context_name')
-    path = os.path.join(app.root_path, 'simulation/mesh/vtk/')
+    path = os.path.join(app.root_path, f'{context_name}_simulation/mesh/vtk/')
     return send_from_directory(path, filename='meshQuality.vtk')
 
 @app.route('/simulation/results/')
@@ -79,8 +81,8 @@ def simulation_results():
     folder_name = f'{context_name}_event_{event_id}_results.zip'
 
     os.system(f'''rm -r *.zip ; rm -r results/* \
-                ; vtk=$(cd simulation/output/maxima && ls | grep *.vtk) \
-                && (cd simulation/output/rasters && python stavResults.py -i ../maxima/$vtk -o ../../../results/{context_name}_event_{event_id})''')
+                ; vtk=$(cd {context_name}_simulation/output/maxima && ls | grep *.vtk) \
+                && (cd {context_name}_simulation/output/rasters && python stavResults.py -i ../maxima/$vtk -o ../../../results/{context_name}_event_{event_id})''')
     # files = {
     #     'max_depth': open('out-Max_Depth.tif', 'rb'),
     #     'max_level': open('out-Max_Level.tif', 'rb'),

@@ -130,6 +130,7 @@ dmypy.json
 
 env.sh
 simulation/
+*simulation/
 paraview_visualizer/
 meshQuality.vtk
 results/
