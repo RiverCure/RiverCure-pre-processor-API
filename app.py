@@ -49,6 +49,7 @@ def simulate():
     event_id = request.args.get('event_id')
     frequency_destination_folder = f'{context_name}_simulation/output/output.cnt'
     sensor_data_destination_folder = f'{context_name}_simulation/boundary/gauges'
+    time_destination_folder = f'{context_name}_simulation/control/time.cnt'
     print(event_id)
     # bnd are duplicated might be necessary to remove them
     try:
@@ -56,6 +57,8 @@ def simulate():
             for key in request.files:
                 if key == 'frequency':
                     request.files[key].save(f'{frequency_destination_folder}')
+                elif key == 'time':
+                    request.files[key].save(f'{time_destination_folder}')
                 else:
                     request.files[key].save(f'{sensor_data_destination_folder}/{key}')
 
