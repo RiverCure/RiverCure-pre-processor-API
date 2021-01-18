@@ -13,7 +13,8 @@ def ping():
 
 @app.route('/process/', methods=['POST'])
 def run_pre_processor():
-    requester_ip = request.remote_addr
+    # requester_ip = request.remote_addr
+    requester_ip = os.environ['RIVERCURE_URL']
     context_name = request.args.get('context_name')
     destination_folder = f'{context_name}_simulation/gis/'
     print(context_name)
@@ -44,12 +45,14 @@ def run_pre_processor():
 
 @app.route('/simulate/', methods=['POST'])
 def simulate():
-    requester_ip = request.remote_addr
+    # requester_ip = request.remote_addr
+    requester_ip = os.environ['RIVERCURE_URL']
     context_name = request.args.get('context_name')
     event_id = request.args.get('event_id')
     frequency_destination_folder = f'{context_name}_simulation/output/output.cnt'
     sensor_data_destination_folder = f'{context_name}_simulation/boundary/gauges'
     time_destination_folder = f'{context_name}_simulation/control/time.cnt'
+    boundary_destination_folder = f'{context_name}_simulation/boundary/boundary.cnt'
     print(event_id)
     # bnd are duplicated might be necessary to remove them
     try:
@@ -59,6 +62,8 @@ def simulate():
                     request.files[key].save(f'{frequency_destination_folder}')
                 elif key == 'time':
                     request.files[key].save(f'{time_destination_folder}')
+                elif key == 'boundaries':
+                    request.files[key].save(f'{boundary_destination_folder}')
                 else:
                     request.files[key].save(f'{sensor_data_destination_folder}/{key}')
 
