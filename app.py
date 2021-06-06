@@ -11,6 +11,19 @@ def ping():
     status_code = Response(status=200)
     return status_code
 
+@app.route('/process-status/', methods=['GET'])
+def get_pre_processor_status():
+    context_name = request.args.get('context_name')
+    log_file = f"logs/{context_name}_log.txt"
+    if not os.path.isfile(log_file):
+        return Response(status=404)
+
+    msg = ""
+    with open(log_file, "r") as f_log:
+        msg = f_log.read()
+    
+    return msg
+
 @app.route('/process/', methods=['POST'])
 def run_pre_processor():
     # requester_ip = request.remote_addr
@@ -18,22 +31,28 @@ def run_pre_processor():
     context_name = request.args.get('context_name')
     destination_folder = f'{context_name}_simulation/gis/'
     print(context_name)
+    log_file = f"logs/{context_name}_log.txt"
+    if os.path.exists(log_file):
+        os.remove(log_file)
+
     try:
+        
         os.system(f'cp -r simulation {context_name}_simulation')
 
-        if request.method == 'POST':
-            for key in request.files:
-                if key == 'dtm.tif' or key == 'frictionCoef.tif':
-                    request.files[key].save(f'{destination_folder}rasters/{key}')
-                else:
-                    request.files[key].save(f'{destination_folder}context_files/{key}')
+        for key in request.files:
+            if key == 'dtm.tif' or key == 'frictionCoef.tif':
+                request.files[key].save(f'{destination_folder}rasters/{key}')
+            else:
+                request.files[key].save(f'{destination_folder}context_files/{key}')
 
         # os.system(f'''(cd simulation/gis && ./mesh && cd ../.. \
         #             && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk &)''')
 
-        subprocess.call(f'''(cd {context_name}_simulation/gis && ./mesh && cd ../.. \
+        log_f = open(log_file, "w")
+        p = subprocess.Popen(f'''(cd {context_name}_simulation/gis && ./mesh && cd ../.. \
                     && cp {context_name}_simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk \
-                    && curl {requester_ip}/contexts/mesh-status/{context_name}?status=True &)''', shell=True)
+                    && curl {requester_ip}/contexts/mesh-status/{context_name}?status=True &)''', 
+                    stdout=log_f, stderr=log_f, shell=True)
         
         # payload = {'status': True}
         # requests.get(f'{rivercure_url}/contexts/mesh-status/{context_name}', params=payload)
