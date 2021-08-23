@@ -136,3 +136,4 @@ meshQuality.vtk
 results/
 *.zip
 *.vtk
+logs
