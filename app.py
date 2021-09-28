@@ -79,10 +79,12 @@ def simulate():
     context_name = request.args.get('context_name')
     event_id = request.args.get('event_id')
     print(f'Simulation request for event {event_id} of context {context_name}')
+    
     frequency_destination_folder = f'{context_name}_simulation/output/output.cnt'
     sensor_data_destination_folder = f'{context_name}_simulation/boundary/gauges'
     time_destination_folder = f'{context_name}_simulation/control/time.cnt'
     boundary_destination_folder = f'{context_name}_simulation/boundary/boundary.cnt'
+    
     log_file = f"logs/{context_name}_simulate_{event_id}_log.txt"
     if os.path.exists(log_file):
         os.remove(log_file)
