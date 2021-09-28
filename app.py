@@ -14,7 +14,7 @@ def ping():
 @app.route('/process-status/', methods=['GET'])
 def get_pre_processor_status():
     context_name = request.args.get('context_name')
-    log_file = f"logs/{context_name}_log.txt"
+    log_file = f"logs/{context_name}_process_log.txt"
     if not os.path.isfile(log_file):
         return Response(status=404)
 
@@ -31,12 +31,11 @@ def run_pre_processor():
     context_name = request.args.get('context_name')
     destination_folder = f'{context_name}_simulation/gis/'
     print(context_name)
-    log_file = f"logs/{context_name}_log.txt"
+    log_file = f"logs/{context_name}_process_log.txt"
     if os.path.exists(log_file):
         os.remove(log_file)
 
     try:
-        
         os.system(f'cp -r simulation {context_name}_simulation')
 
         for key in request.files:
@@ -45,14 +44,11 @@ def run_pre_processor():
             else:
                 request.files[key].save(f'{destination_folder}context_files/{key}')
 
-        # os.system(f'''(cd simulation/gis && ./mesh && cd ../.. \
-        #             && cp simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk &)''')
-
         log_f = open(log_file, "w")
-        p = subprocess.Popen(f'''(cd {context_name}_simulation/gis && ./mesh && cd ../.. \
-                    && cp {context_name}_simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk \
-                    && curl {requester_ip}/contexts/mesh-status/{context_name}?status=True &)''', 
-                    stdout=log_f, stderr=log_f, shell=True)
+        subprocess.Popen(f'''(cd {context_name}_simulation/gis && ./mesh && cd ../.. \
+                && cp {context_name}_simulation/mesh/vtk/meshQuality.vtk paraview_visualizer/data/{context_name}_mesh.vtk \
+                && curl {requester_ip}/contexts/mesh-status/{context_name}?status=True &)''', 
+                stdout=log_f, stderr=log_f, shell=True)
         
         # payload = {'status': True}
         # requests.get(f'{rivercure_url}/contexts/mesh-status/{context_name}', params=payload)
@@ -62,17 +58,33 @@ def run_pre_processor():
 
     return 'success'
 
+@app.route('/simulate-status/', methods=['GET'])
+def get_simulation_status():
+    event_id = request.args.get('event_id')
+    context_name = request.args.get('context_name')
+    log_file = f"logs/{context_name}_simulate_{event_id}_log.txt"
+    if not os.path.isfile(log_file):
+        return Response(status=404)
+
+    msg = ""
+    with open(log_file, "r") as f_log:
+        msg = f_log.read()
+    
+    return msg
+
 @app.route('/simulate/', methods=['POST'])
 def simulate():
-    # requester_ip = request.remote_addr
     requester_ip = os.environ['RIVERCURE_URL']
     context_name = request.args.get('context_name')
     event_id = request.args.get('event_id')
+    print(f'Simulation request for event {event_id} of context {context_name}')
     frequency_destination_folder = f'{context_name}_simulation/output/output.cnt'
     sensor_data_destination_folder = f'{context_name}_simulation/boundary/gauges'
     time_destination_folder = f'{context_name}_simulation/control/time.cnt'
     boundary_destination_folder = f'{context_name}_simulation/boundary/boundary.cnt'
-    print(event_id)
+    log_file = f"logs/{context_name}_simulate_{event_id}_log.txt"
+    if os.path.exists(log_file):
+        os.remove(log_file)
     # bnd are duplicated might be necessary to remove them
     try:
         if request.method == 'POST':
@@ -86,8 +98,9 @@ def simulate():
                 else:
                     request.files[key].save(f'{sensor_data_destination_folder}/{key}')
 
-        subprocess.call(f'''(cd {context_name}_simulation && ./solver2D-OMP.dat \
-                            && curl {requester_ip}/contexts/simulation/results/handle/{event_id} &)''', shell=True)
+        log_f = open(log_file, "w")
+        subprocess.Popen(f'''(cd {context_name}_simulation && ./solver2D \
+                            && curl {requester_ip}/contexts/simulation/results/handle/{event_id} &)''', stdout=log_f, stderr=log_f, shell=True)
     except Exception as e:
         print(f'Failed simulation!\nException{e}')
         return 'fail'
