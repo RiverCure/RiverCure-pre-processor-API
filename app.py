@@ -66,9 +66,10 @@ def get_simulation_status():
     if not os.path.isfile(log_file):
         return Response(status=404)
 
-    msg = ""
+    msg = []
     with open(log_file, "r") as f_log:
-        msg = f_log.read()
+        msg = f_log.readlines()[-100:]
+    msg = "".join(msg)
     
     return msg
 
