@@ -50,8 +50,6 @@ def run_pre_processor():
                 && curl {requester_ip}/contexts/mesh-status/{context_name}?status=True &)''', 
                 stdout=log_f, stderr=log_f, shell=True)
         
-        # payload = {'status': True}
-        # requests.get(f'{rivercure_url}/contexts/mesh-status/{context_name}', params=payload)
     except Exception as e:
         print(f'Failed pre-processing!\nException{e}')
         return 'fail'
@@ -102,8 +100,10 @@ def simulate():
                     request.files[key].save(f'{sensor_data_destination_folder}/{key}')
 
         log_f = open(log_file, "w")
+        # curl {requester_ip}/contexts/simulation/results/handle/{event_id} used to be here but now is not needed. Only the VTK in output/maxima/ is.
         subprocess.Popen(f'''(cd {context_name}_simulation && ./solver2D \
-                            && curl {requester_ip}/contexts/simulation/results/handle/{event_id} &)''', stdout=log_f, stderr=log_f, shell=True)
+                            && curl {requester_ip}/contexts/event-status/{event_id}?status=True &)''', 
+                            stdout=log_f, stderr=log_f, shell=True)
     except Exception as e:
         print(f'Failed simulation!\nException{e}')
         return 'fail'
@@ -118,32 +118,14 @@ def preprocessing_results():
 
 @app.route('/simulation/results/')
 def simulation_results():
-    #event id necessary in the future
     context_name = request.args.get('context_name')
-    event_id = request.args.get('event_id')
-    folder_name = f'{context_name}_event_{event_id}_results.zip'
-
-    os.system(f'''rm -r *.zip ; rm -r results/* \
-                ; vtk=$(cd {context_name}_simulation/output/maxima && ls | grep *.vtk) \
-                && (cd {context_name}_simulation/output/rasters && python stavResults.py -i ../maxima/$vtk -o ../../../results/{context_name}_event_{event_id})''')
-    # files = {
-    #     'max_depth': open('out-Max_Depth.tif', 'rb'),
-    #     'max_level': open('out-Max_Level.tif', 'rb'),
-    #     'max_q': open('out-Max_Q.tif', 'rb'),
-    #     'max_vel': open('out-Max_Vel.tif', 'rb')
-    # }
-
-    with zipfile.ZipFile(folder_name, 'w', compression = zipfile.ZIP_STORED) as zipfolder:
-        for root,dirs, files in os.walk('results/'):
-            for file in files:
-                zipfolder.write('results/' + file)
-
-    return send_file(folder_name,
-            mimetype = 'zip',
-            attachment_filename= folder_name,
-            as_attachment = True)
-
-    # return send_file('./out-Max_Depth.tif', attachment_filename='out-Max_Depth.tif')
+    path = os.path.join(app.root_path, f'{context_name}_simulation/output/maxima/')
+    # The name can vary, but always starts with 'maxi'. Assume only one file, the desired one, is in this folder
+    try:
+        file_name = os.listdir(path)[0]
+        return send_from_directory(path, filename=file_name)
+    except: # usually this happens if the file doesnt exist in the folder
+        return Response(status=404)
 
 if __name__ == "__main__":
     ENVIRONMENT_DEBUG = os.environ.get("DEBUG", False)
