@@ -159,7 +159,7 @@ def preprocessing_results():
         return Response(status=400)
 
     path = os.path.join(app.root_path, f'{organizationCode}/{contextCode}_simulation/mesh/vtk/')
-    return send_from_directory(path, filename='meshQuality.vtk')
+    return send_from_directory(path, 'meshQuality.vtk')
 
 @app.route('/simulation/results/')
 def simulation_results():
@@ -172,7 +172,7 @@ def simulation_results():
     # The name can vary, but always starts with 'maxi'. Assume only one file, the desired one, is in this folder
     try:
         file_name = os.listdir(path)[0]
-        return send_from_directory(path, filename=file_name)
+        return send_from_directory(path, file_name)
     except: # usually this happens if the file doesnt exist in the folder
         return Response(status=404)
 
