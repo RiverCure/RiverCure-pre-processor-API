@@ -1,5 +1,7 @@
-import os, subprocess, shutil
-from flask import Flask, Response, request, send_from_directory
+from io import BytesIO
+import io
+import os, subprocess, shutil, zipfile
+from flask import Flask, Response, request, send_from_directory, make_response
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -169,10 +171,23 @@ def simulation_results():
         return Response(status=400)
 
     path = os.path.join(app.root_path, f'{organizationCode}/{contextCode}_simulation/output/maxima/')
-    # The name can vary, but always starts with 'maxi'. Assume only one file, the desired one, is in this folder
+    # # The name can vary, but always starts with 'maxi'. Assume only one file, the desired one, is in this folder
     try:
         file_name = os.listdir(path)[0]
-        return send_from_directory(path, file_name)
+        filepath = os.path.join(path, file_name)
+        fileobj = io.BytesIO()
+        with zipfile.ZipFile(fileobj, 'w') as zip_file:
+            zip_info = zipfile.ZipInfo(file_name)
+            zip_info.compress_type = zipfile.ZIP_DEFLATED
+            with open(filepath, 'rb') as fd:
+                zip_file.writestr(zip_info, fd.read())
+        fileobj.seek(0)
+
+        response = make_response(fileobj.read())
+        response.headers.set('Content-Type', 'zip')
+        response.headers.set('Content-Disposition', 'attachment', filename=f'{file_name}.zip')
+        return response
+        # return send_from_directory(path, file_name)
     except: # usually this happens if the file doesnt exist in the folder
         return Response(status=404)
 
