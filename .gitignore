@@ -137,3 +137,4 @@ results/
 *.zip
 *.vtk
 logs
+.DS_Store
